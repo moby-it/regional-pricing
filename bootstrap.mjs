@@ -5,16 +5,14 @@ import { seedDatabase } from './db/db.mjs';
 
 export async function bootstrap() {
     configDotenv();
+    const port = process.env.PORT || 8080;
     const app = express();
-
-    await seedDatabase();
-
+    await seedDatabase().then(() => {
+        app.listen(port, () => {
+            console.log(`App listening to port ${port}`);
+        });
+    })
     app.use(cors());
 
-    const port = process.env.PORT || 8080;
-
-    app.listen(port, () => {
-        console.log(`App listening to port ${port}`);
-    });
     return app;
 }

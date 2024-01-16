@@ -1,26 +1,27 @@
 import sqlite3 from 'sqlite3';
+import * as sqlite from 'sqlite';
 
-async function connectToDb(mode) {
-    const db = new sqlite3.Database('./cached-coordinates.sqlite3', mode, err => {
-        if (err) {
-            console.error(err.message);
-        }
-        console.log('Succesfully connected to database.');
+async function connectToDb() {
+    const db = await sqlite.open({
+        filename: 'cached-coordinates.sqlite3',
+        driver: sqlite3.Database
     })
+    console.log('Successfully connected to Database. ')
     return db;
 }
 
 async function closeConnection(db) {
-    db.close();
+    await db.close();
+    console.log('Connection ended.')
 }
 
 export async function seedDatabase() {
-    const db = await connectToDb(sqlite3.OPEN_READWRITE);
-    db.serialize(() => {
-        db.run(`CREATE TABLE IF NOT EXISTS cachedData(id INTEGER PRIMARY KEY, lat REAL, lon REAL, country TEXT)`);
-        closeConnection(db);
-    })
-    return console.log('Database seeded.');
+    const db = await connectToDb();
+    await db.run(`CREATE TABLE IF NOT EXISTS 
+    cachedData(id INTEGER PRIMARY KEY, lat REAL, lon REAL, country TEXT);`);
+
+    console.log('Database seeded.');
+    return await closeConnection(db);
 }
 
 export async function searchCached(lat, lon) {
