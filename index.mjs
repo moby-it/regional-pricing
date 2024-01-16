@@ -1,18 +1,7 @@
-import cors from 'cors';
-import { configDotenv } from 'dotenv';
-import express from 'express';
+import { bootstrap } from './bootstrap.mjs';
 import { fetchCountry } from './fetchCountry.mjs';
-configDotenv();
 
-const app = express();
-
-app.use(cors());
-
-const port = process.env.PORT || 8080;
-
-app.listen(port, () => {
-    console.log(`App listening to port ${port}`);
-});
+const app = await bootstrap();
 
 app.get('/location', async (req, res) => {
     try {
