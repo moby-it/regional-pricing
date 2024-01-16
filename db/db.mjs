@@ -6,13 +6,13 @@ async function connectToDb() {
         filename: 'cached-coordinates.sqlite3',
         driver: sqlite3.Database
     })
-    console.log('Successfully connected to Database. ')
+    console.log('Successfully connected to Database. ');
     return db;
 }
 
 async function closeConnection(db) {
     await db.close();
-    console.log('Connection ended.')
+    console.log('Connection ended.');
 }
 
 export async function seedDatabase() {
@@ -26,30 +26,30 @@ export async function seedDatabase() {
 
 export async function searchCached(lat, lon) {
     const sql = `SELECT country FROM cachedData  WHERE lat= ? AND lon = ?`
-    const db = await connectToDb(sqlite3.OPEN_READONLY);
-    db.serialize(() => {
-        const country = db.get(sql, [lat, lon], (err, row) => {
-            if (err) {
-                return console.error(err.message);
-            }
-            return row;
-        });
-        closeConnection(db);
-    })
+    const db = await connectToDb();
+
+    const result = await db.get(sql, [lat, lon], (err, row) => {
+        if (err) {
+            return console.error(err.message);
+        }
+        return row;
+    });
     await closeConnection(db);
-    console.log(country);
+    return result
+        ? result.country
+        : false;
 }
 
 export async function cacheCoordinates(lat, lon, country) {
-    const db = await connectToDb(sqlite3.OPEN_READWRITE);
-    const sql = `INSERT INTO cachedData VALUES (?),(?),(?)`;
-    db.serialize(() => {
-        db.run(sql, [lat, lon, country], err => {
-            if (err) {
-                return console.error(err.message);
-            }
-            return console.log('Coordinates cached succesfully.');
-        });
-        closeConnection(db);
-    })
+    const db = await connectToDb();
+    const sql = `INSERT INTO cachedData ( lat, lon, country)VALUES (?,?,?)`;
+
+    await db.run(sql, [lat, lon, country], async (err) => {
+        if (err) {
+            return console.error(err.message);
+        }
+
+    });
+    console.log('Coordinates cached succesfully.');
+    return await closeConnection(db);
 }
