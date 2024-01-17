@@ -1,11 +1,18 @@
 import axios from "axios";
 import * as v from 'valibot';
 
-function getCountryApiUrl(lat, lon) {
+function getCountryByLatLonApiUrl(lat, lon) {
   return `https://nominatim.openstreetmap.org/reverse.php?lat=${lat}&lon=${lon}&zoom=3&format=jsonv2&accept-language=en`;
 }
-export async function fetchCountry(lat, lon) {
-  const res = await axios.get(getCountryApiUrl(lat, lon));
+
+/**
+ * 
+ * @param {string} lat 
+ * @param {string} lon 
+ * @returns {Promise<string | undefined>}
+ */
+export async function fetchByLatLon(lat, lon) {
+  const res = await axios.get(getCountryByLatLonApiUrl(lat, lon));
   if (res.status !== 200) return;
   const addressSchema = v.object({
     country: v.string()
