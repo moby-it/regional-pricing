@@ -4,6 +4,7 @@ import express from 'express';
 import { fetchByIp } from './country/getByIp.mjs';
 import { fetchByLatLon } from './country/getByLatLon.mjs';
 import { seedDatabase } from './db/db.mjs';
+import * as v from 'valibot';
 configDotenv();
 
 configDotenv();
@@ -30,9 +31,11 @@ app.get('/location', async (req, res) => {
 
 app.get('/countryByIp', async (req, res) => {
     try {
-        const ip = req.headers.forwarded;
-        if (!ip)
+        const ipHeader = req.headers['x-forwarded-for'];
+        const ip = v.parse(v.string(), ipHeader);
+        if (!ip) {
             return res.status(400).send({ message: "ip missing from headers" });
+        }
         const country = await fetchByIp(ip);
         return res.send(country);
     } catch (error) {
