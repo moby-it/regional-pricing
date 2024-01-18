@@ -21,7 +21,7 @@ export async function seedDatabase() {
     cachedData(id INTEGER PRIMARY KEY, lat REAL, lon REAL, country TEXT);`);
 
     console.log('Database seeded.');
-    return await closeConnection(db);
+     await closeConnection(db);
 }
 
 export async function searchCached(lat, lon) {
@@ -30,7 +30,7 @@ export async function searchCached(lat, lon) {
 
     const result = await db.get(sql, [lat, lon], (err, row) => {
         if (err) {
-            return console.error(err.message);
+             console.error(err.message);
         }
         return row;
     });
@@ -46,10 +46,10 @@ export async function cacheCoordinates(lat, lon, country) {
 
     await db.run(sql, [lat, lon, country], async (err) => {
         if (err) {
-            return console.error(err.message);
+            console.error(err.message);
         }
 
     });
     console.log('Coordinates cached succesfully.');
-    return await closeConnection(db);
+    await closeConnection(db);
 }
