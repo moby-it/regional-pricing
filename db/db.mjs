@@ -28,6 +28,12 @@ export async function seedDatabase() {
     await closeConnection(db);
 }
 
+/**
+ * 
+ * @param {string} lat 
+ * @param {string} lon 
+ * @returns {Promise<string | null>}
+ */
 export async function searchCached(lat, lon) {
     const sql = `SELECT country FROM cachedCountries  WHERE lat= ? AND lon = ?`;
     const db = await connectToDb();
@@ -41,7 +47,7 @@ export async function searchCached(lat, lon) {
     await closeConnection(db);
     return result
         ? result.country
-        : false;
+        : null;
 }
 
 export async function cacheCoordinates(lat, lon, country) {
