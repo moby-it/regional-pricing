@@ -3,34 +3,38 @@ import * as sqlite from 'sqlite';
 
 async function connectToDb() {
     const db = await sqlite.open({
-        filename: 'cached-coordinates.sqlite3',
+        filename: 'regional_pricing.sqlite3',
         driver: sqlite3.Database
-    })
+    });
     console.log('Successfully connected to Database. ');
     return db;
 }
 
 async function closeConnection(db) {
-    await db.close();
-    console.log('Connection ended.');
+    try {
+        await db.close();
+        console.log('Connection closed.');
+    } catch (e) {
+        console.warn(e);
+    }
 }
 
 export async function seedDatabase() {
     const db = await connectToDb();
     await db.run(`CREATE TABLE IF NOT EXISTS 
-    cachedData(id INTEGER PRIMARY KEY, lat REAL, lon REAL, country TEXT);`);
+    cachedCountries(id INTEGER PRIMARY KEY, lat REAL, lon REAL, country TEXT);`);
 
     console.log('Database seeded.');
-     await closeConnection(db);
+    await closeConnection(db);
 }
 
 export async function searchCached(lat, lon) {
-    const sql = `SELECT country FROM cachedData  WHERE lat= ? AND lon = ?`
+    const sql = `SELECT country FROM cachedCountries  WHERE lat= ? AND lon = ?`;
     const db = await connectToDb();
 
     const result = await db.get(sql, [lat, lon], (err, row) => {
         if (err) {
-             console.error(err.message);
+            console.error(err.message);
         }
         return row;
     });
@@ -42,7 +46,7 @@ export async function searchCached(lat, lon) {
 
 export async function cacheCoordinates(lat, lon, country) {
     const db = await connectToDb();
-    const sql = `INSERT INTO cachedData ( lat, lon, country)VALUES (?,?,?)`;
+    const sql = `INSERT INTO cachedCountries ( lat, lon, country)VALUES (?,?,?)`;
 
     await db.run(sql, [lat, lon, country], async (err) => {
         if (err) {
