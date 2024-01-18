@@ -1,5 +1,6 @@
 import axios from "axios";
 import * as v from 'valibot';
+import { searchCached } from "../db/db.mjs";
 
 function getCountryByLatLonApiUrl(lat, lon) {
   return `https://nominatim.openstreetmap.org/reverse.php?lat=${lat}&lon=${lon}&zoom=3&format=jsonv2&accept-language=en`;
@@ -9,23 +10,34 @@ function getCountryByLatLonApiUrl(lat, lon) {
  * 
  * @param {string} lat 
  * @param {string} lon 
- * @returns {Promise<string | undefined>}
+ * @returns {Promise<{country:string, cached:boolean}>}
  */
 export async function fetchByLatLon(lat, lon) {
-  const res = await axios.get(getCountryByLatLonApiUrl(lat, lon));
-  if (res.status !== 200) return;
-  const addressSchema = v.object({
-    country: v.string()
-  });
-  const responseSchema = v.object({
-    address: addressSchema
-  });
-  const valiRes = v.safeParse(responseSchema, res.data);
+  const cached = await searchCached(lat, lon);
+  if (cached) {
+    return {
+      country: cached,
+      cached: true
+    };
+  } else {
+    const res = await axios.get(getCountryByLatLonApiUrl(lat, lon));
+    if (res.status !== 200) return;
+    const addressSchema = v.object({
+      country: v.string()
+    });
+    const responseSchema = v.object({
+      address: addressSchema
+    });
+    const valiRes = v.safeParse(responseSchema, res.data);
 
-  if (valiRes.success)
-    return valiRes.output.address.country;
-  else {
-    console.error("schema validation failed", valiRes.issues);
-    return;
+    if (valiRes.success)
+      return {
+        country: valiRes.output.address.country,
+        cached: !!cached
+      };
+    else {
+      console.error("schema validation failed", valiRes.issues);
+      return;
+    }
   }
 };
