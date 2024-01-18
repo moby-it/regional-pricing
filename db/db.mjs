@@ -11,8 +11,12 @@ async function connectToDb() {
 }
 
 async function closeConnection(db) {
+    try {
     await db.close();
-    console.log('Connection ended.');
+        console.log('Connection closed.');
+    } catch (e) {
+        console.warn(e);
+    }
 }
 
 export async function seedDatabase() {
