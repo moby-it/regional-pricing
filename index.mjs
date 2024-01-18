@@ -1,8 +1,16 @@
-import { bootstrap } from './bootstrap.mjs';
+import { cacheCoordinates, searchCached } from './db/db.mjs';
 import { fetchCountry } from './fetchCountry.mjs';
-import { searchCached, cacheCoordinates } from './db/db.mjs';
+import { configDotenv } from 'dotenv';
+import { seedDatabase } from './db/db.mjs';
+import cors from 'cors';
+import express from 'express';
 
-const app = await bootstrap();
+configDotenv();
+const port = process.env.PORT || 8080;
+const app = express();
+await seedDatabase();
+
+app.use(cors());
 
 app.get('/location', async (req, res) => {
     try {
@@ -18,4 +26,7 @@ app.get('/location', async (req, res) => {
         res.status(500).send(error);
     }
 });
-// 38.44581189757543, 27.143919872818454
+
+app.listen(port, () => {
+    console.log(`App listening to port ${port}`);
+});
