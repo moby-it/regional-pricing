@@ -14,11 +14,11 @@ export async function seedDatabase() {
     const columns = Object.keys(row);
     const createTableQuery = `CREATE TABLE IF NOT EXISTS
        defaultPrice (
-          ${columns.map((column) => `${column} TEXT`).join(',\n')}
+          ${columns.map((column) => `${column} TEXT UNIQUE`).join(',\n')}
         );`;
     await seedQuery(createTableQuery);
 
-    const insertQuery = `INSERT INTO defaultPrice (${columns.join(', ')})
+    const insertQuery = `INSERT OR IGNORE INTO defaultPrice (${columns.join(', ')})
     VALUES (${columns.map(() => '?').join(', ')})`;
     const values = columns.map((column) => row[column]);
     await seedQuery(insertQuery, values);

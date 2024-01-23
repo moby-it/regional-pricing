@@ -26,6 +26,22 @@ export async function seedQuery(sql, args) {
         console.error(error);
     }
 }
+export async function selectQuery(sql, args) {
+    let data = [];
+    try {
+        const db = await connectToDb();
+        await db.each(sql, args, (error, row) => {
+            if (error) {
+                console.log(error);
+            }
+            data.push(row)
+        });
+        await closeConnection(db);
+        return data;
+    } catch (error) {
+        console.error(error);
+    }
+}
 /**
  * 
  * @param {string} lat 
