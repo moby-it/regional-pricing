@@ -6,28 +6,26 @@ async function connectToDb() {
         filename: 'regional_pricing.sqlite3',
         driver: sqlite3.Database
     });
-    console.log('Successfully connected to Database. ');
     return db;
 }
 
 async function closeConnection(db) {
     try {
         await db.close();
-        console.log('Connection closed.');
     } catch (e) {
         console.warn(e);
     }
 }
 
-export async function seedDatabase() {
-    const db = await connectToDb();
-    await db.run(`CREATE TABLE IF NOT EXISTS 
-    cachedCountries(id INTEGER PRIMARY KEY, lat REAL, lon REAL, country TEXT);`);
-
-    console.log('Database seeded.');
-    await closeConnection(db);
+export async function seedQuery(sql, args) {
+    try {
+        const db = await connectToDb();
+        await db.run(sql, args);
+        await closeConnection(db);
+    } catch (error) {
+        console.error(error);
+    }
 }
-
 /**
  * 
  * @param {string} lat 

@@ -3,7 +3,7 @@ import { configDotenv } from 'dotenv';
 import express from 'express';
 import { fetchByIp } from './country/getByIp.mjs';
 import { fetchByLatLon } from './country/getByLatLon.mjs';
-import { seedDatabase } from './db/db.mjs';
+import { seedDatabase } from './db/seedDatabase.mjs';
 import * as v from 'valibot';
 configDotenv();
 
