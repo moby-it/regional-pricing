@@ -4,7 +4,7 @@ const initPriceRouter = express.Router();
 
 initPriceRouter.get('/', async (req, res) => {
     try {
-        const sql = ` SELECT * FROM defaultPrice`;
+        const sql = ` SELECT * FROM defaultPrices`;
         const result = await selectQuery(sql);
         return res.send(result);
     } catch (error) {
