@@ -12,7 +12,6 @@ app.use(cors());
 await seedDatabase();
 app.use('/initialPrices', initPriceRouter);
 app.use('/country', locationRouter)
-app.use('/country', locationRouter)
 
 app.listen(port, () => {
     console.log(`App listening to port ${port}`);
