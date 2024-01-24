@@ -26,8 +26,8 @@ export async function seedDatabase() {
     await mutateQuery(insertQuery, values);
   });
   // create if not exists cachedCountries table
-  const query = `CREATE TABLE IF NOT EXISTS 
-  cachedCountries(id INTEGER PRIMARY KEY, lat REAL, lon REAL, country TEXT);`;
-  await mutateQuery(query);
+  // const query = `CREATE TABLE IF NOT EXISTS 
+  // cachedCountries(id INTEGER PRIMARY KEY, lat REAL, lon REAL, country TEXT);`;
+  // await mutateQuery(query);
   console.log('Database seeded.');
 }

@@ -13,7 +13,8 @@ function getCountryByLatLonApiUrl(lat, lon) {
  * @returns {Promise<{country:string, cached:boolean}>}
  */
 export async function fetchByLatLon(lat, lon) {
-  const cached = await searchCached(lat, lon);
+  // const cached = await searchCached(lat, lon);
+  const cached = false;
   if (cached) {
     return {
       country: cached,
