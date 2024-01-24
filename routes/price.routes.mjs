@@ -1,8 +1,8 @@
 import express from "express";
 import { selectQuery } from "../db/db.mjs";
-const initPriceRouter = express.Router();
+const priceRouter = express.Router();
 
-initPriceRouter.get('/', async (req, res) => {
+priceRouter.get('/default', async (req, res) => {
     try {
         const sql = ` SELECT * FROM defaultPrices`;
         const result = await selectQuery(sql);
@@ -12,4 +12,4 @@ initPriceRouter.get('/', async (req, res) => {
     }
 });
 
-export default initPriceRouter;
+export default priceRouter;
