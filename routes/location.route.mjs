@@ -21,9 +21,9 @@ locationRouter.get('/byCoordinates', async (req, res) => {
 locationRouter.get('/byIp', async (req, res) => {
     try {
         const ipHeader = req.headers['x-forwarded-for'];
-        const ip = v.parse(v.string(), ipHeader);
-        if (!ip) {
-            return res.status(400).send({ message: "ip missing from headers" });
+        const { success, output: ip } = v.safeParse(v.string([v.minLength(9)]), ipHeader);
+        if (!success) {
+            return res.status(400).send({ message: "incorrect ip provided" });
         }
         const country = await fetchByIp(ip);
         return res.send(country);
