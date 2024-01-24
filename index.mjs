@@ -7,13 +7,12 @@ import { seedDatabase } from './db/seedDatabase.mjs';
 import * as v from 'valibot';
 import initPriceRouter from './routes/initial_price.route.mjs';
 configDotenv();
-
-configDotenv();
 const port = process.env.PORT || 8080;
 const app = express();
-await seedDatabase();
-app.use('/initialPrices', initPriceRouter)
 app.use(cors());
+await seedDatabase();
+app.use('/initialPrices', initPriceRouter);
+
 
 app.get('/location', async (req, res) => {
     try {

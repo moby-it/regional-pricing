@@ -17,7 +17,7 @@ async function closeConnection(db) {
     }
 }
 
-export async function seedQuery(sql, args) {
+export async function mutateQuery(sql, args) {
     try {
         const db = await connectToDb();
         await db.run(sql, args);

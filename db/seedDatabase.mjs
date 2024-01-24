@@ -18,7 +18,7 @@ export async function seedDatabase() {
         );`;
     await seedQuery(createTableQuery);
 
-    const insertQuery = `INSERT OR IGNORE INTO defaultPrice (${columns.join(', ')})
+    const insertQuery = `INSERT OR IGNORE INTO defaultPrices (${columns.join(', ')})
     VALUES (${columns.map(() => '?').join(', ')})`;
     const values = columns.map((column) => row[column]);
     await seedQuery(insertQuery, values);
