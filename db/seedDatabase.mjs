@@ -6,28 +6,41 @@ import path from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const cvsFilePath = `${__dirname}/default_prices.csv`;
+const defaultPricesPath = `${__dirname}/default_prices.csv`;
+const priceWeightsPath = `${__dirname}/price_weights.csv`;
 
-export async function seedDatabase() {
-  const dropQuery = "DROP TABLE IF EXISTS defaultPrices";
+async function dropTable(table) {
+  const dropQuery = `DROP TABLE IF EXISTS ${table}`;
   await mutateQuery(dropQuery);
-  //create if not exists and populate defaultPrice table
-  createReadStream(cvsFilePath).pipe(csvParser()).on('data', async (row) => {
+}
+export async function seedDatabase() {
+  //create if not exists and populate defaultPrices table
+  await dropTable('defaultPrices');
+  const createDefaultPricesTable = `CREATE TABLE IF NOT EXISTS
+  defaultPrices ( service_name TEXT, cost INTEGER );`;
+  await mutateQuery(createDefaultPricesTable);
+  createReadStream(defaultPricesPath).pipe(csvParser()).on('data', async (row) => {
     const columns = Object.keys(row);
-    const createTableQuery = `CREATE TABLE IF NOT EXISTS
-       defaultPrices (
-          ${columns.map((column) => `${column} TEXT UNIQUE`).join(',\n')}
-        );`;
-    await mutateQuery(createTableQuery);
-
     const insertQuery = `INSERT OR IGNORE INTO defaultPrices (${columns.join(', ')})
     VALUES (${columns.map(() => '?').join(', ')})`;
     const values = columns.map((column) => row[column]);
     await mutateQuery(insertQuery, values);
   });
-  // create if not exists cachedCountries table
-  // const query = `CREATE TABLE IF NOT EXISTS 
-  // cachedCountries(id INTEGER PRIMARY KEY, lat REAL, lon REAL, country TEXT);`;
-  // await mutateQuery(query);
+  //create if not exists and populate priceWeights table
+  await dropTable('priceWeights');
+  const createPriceWeightsTable = `CREATE TABLE IF NOT EXISTS
+  priceWeights (
+    country TEXT, code TEXT, price_weight REAL );`;
+  await mutateQuery(createPriceWeightsTable);
+  createReadStream(priceWeightsPath)
+    .pipe(csvParser())
+    .on('data', async (row) => {
+      const columns = Object.keys(row);
+      const insertQuery = ` INSERT  OR IGNORE INTO priceWeights 
+      (${columns.join(', ')})
+      VALUES (?, ?, ?)`;
+      const values = columns.map((column) => row[column]);
+      await mutateQuery(insertQuery, values);
+    })
   console.log('Database seeded.');
 }
