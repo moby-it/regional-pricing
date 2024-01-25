@@ -4,7 +4,7 @@ import { logger } from '../logger/logger.mjs';
 
 async function connectToDb() {
     const db = await sqlite.open({
-        filename: 'regional_pricing.sqlite3',
+        filename: 'litefs/regional_pricing.db',
         driver: sqlite3.Database
     });
     return db;
@@ -35,7 +35,7 @@ export async function selectQuery(sql, args) {
             if (error) {
                 logger.error(error);
             }
-            data.push(row)
+            data.push(row);
         });
         await closeConnection(db);
         return data;
