@@ -1,5 +1,6 @@
 import sqlite3 from 'sqlite3';
 import * as sqlite from 'sqlite';
+import { logger } from '../logger/logger.mjs';
 
 async function connectToDb() {
     const db = await sqlite.open({
@@ -13,7 +14,7 @@ async function closeConnection(db) {
     try {
         await db.close();
     } catch (e) {
-        console.warn(e);
+        logger.warn(e);
     }
 }
 
@@ -23,7 +24,7 @@ export async function mutateQuery(sql, args) {
         await db.run(sql, args);
         await closeConnection(db);
     } catch (error) {
-        console.error(error);
+        logger.error(error);
     }
 }
 export async function selectQuery(sql, args) {
@@ -32,14 +33,14 @@ export async function selectQuery(sql, args) {
         const db = await connectToDb();
         await db.each(sql, args, (error, row) => {
             if (error) {
-                console.log(error);
+                logger.error(error);
             }
             data.push(row)
         });
         await closeConnection(db);
         return data;
     } catch (error) {
-        console.error(error);
+        logger.error(error);
     }
 }
 /**
@@ -54,7 +55,7 @@ export async function searchCached(lat, lon) {
 
     const result = await db.get(sql, [lat, lon], (err, row) => {
         if (err) {
-            console.error(err.message);
+            logger.error(err.message);
         }
         return row;
     });
@@ -70,10 +71,10 @@ export async function cacheCoordinates(lat, lon, country) {
 
     await db.run(sql, [lat, lon, country], async (err) => {
         if (err) {
-            console.error(err.message);
+            logger.error(err.message);
         }
 
     });
-    console.log('Coordinates cached succesfully.');
+    logger.info('Coordinates cached succesfully.');
     await closeConnection(db);
 }

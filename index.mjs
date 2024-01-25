@@ -11,8 +11,7 @@ const app = express();
 app.use(cors());
 await seedDatabase();
 app.use('/price', priceRouter);
-app.use('/country', locationRouter)
-
-app.listen(port, () => {
-    console.log(`App listening to port ${port}`);
+const server = app.listen(port, () => {
+    logger.info(`App listening to port ${port}`);
 });
+
