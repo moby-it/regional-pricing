@@ -1,11 +1,16 @@
 import axios from "axios";
 import * as v from 'valibot';
+import { createRedisClient } from "../redis/client.mjs";
+import { incrMetric } from "../metrics.mjs";
+import { logger } from "../logger/logger.mjs";
 
 /**
  * @param {string} ip
  */
 function getCountryByIPApiUrl(ip) {
-  if (!ip) throw new Error('no ip provided');
+  if (!ip) {
+    logger.error('no ip provided');
+  }
   return `http://ip-api.com/json/${ip}?fields=49155`;
 }
 
@@ -15,18 +20,50 @@ function getCountryByIPApiUrl(ip) {
  * @returns {Promise<string | undefined>}
  */
 export async function fetchByIp(ip) {
+  const redis = await createRedisClient();
+  let country;
+  if (!redis) {
+    return await getCountryByIP(ip, null);
+  }
+  try {
+    country = await redis.get(ip);
+    if (country) {
+      await incrMetric('cacheHit', redis);
+      return country;
+    }
+    await incrMetric('cacheMiss', redis);
+    country = await getCountryByIP(ip, redis);
+    return country;
+  } catch (e) {
+    logger.error(e);
+    return null;
+  } finally {
+    await redis.disconnect();
+  }
+}
+
+async function getCountryByIP(ip, redis) {
+  logger.info('getting country for ip ' + ip);
   const res = await axios.get(getCountryByIPApiUrl(ip));
-  if (res.status !== 200 || res?.data?.status === 'fail') throw res.data;
+  if (res.status !== 200 || res?.data?.status === 'fail') {
+    logger.error(JSON.stringify(res.data));
+    throw res.data;
+  }
   const schema = v.object({
     status: v.string(),
     country: v.string(),
     countryCode: v.string()
   });
   const valiRes = v.safeParse(schema, res.data);
-  if (valiRes.success)
-    return valiRes.output.country;
+  if (valiRes.success) {
+    {
+      const ttl = Number(process.env.REDIS_IP_TTL) || 14400; // defaults to 4 hours
+      if (redis) { await redis.set(ip, valiRes.output.country, { EX: ttl }); }
+      return valiRes.output.country;
+    }
+  }
   else {
-    console.error("schema validation failed", valiRes.issues);
+    logger.error("schema validation failed", valiRes.issues);
     return;
   }
-};
+}

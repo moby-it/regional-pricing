@@ -1,6 +1,6 @@
 import axios from "axios";
 import * as v from 'valibot';
-import { searchCached } from "../db/db.mjs";
+import { logger } from "../logger/logger.mjs";
 
 function getCountryByLatLonApiUrl(lat, lon) {
   return `https://nominatim.openstreetmap.org/reverse.php?lat=${lat}&lon=${lon}&zoom=3&format=jsonv2&accept-language=en`;
@@ -37,8 +37,8 @@ export async function fetchByLatLon(lat, lon) {
         cached: !!cached
       };
     else {
-      console.error("schema validation failed", valiRes.issues);
+      logger.error("schema validation failed", valiRes.issues);
       return;
     }
   }
-};
+}
