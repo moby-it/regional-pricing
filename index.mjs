@@ -33,3 +33,16 @@ const server = app.listen(port, () => {
     logger.info(`App listening to port ${port}`);
 });
 
+process.on('SIGINT', () => {
+    logger.info('Received SIGINT. Press Control-D to exit.');
+});
+process.on('SIGINT', gracefulClose);
+process.on('SIGTERM', () => {
+    logger.info('server terminated.');
+    process.exit(1);
+});
+
+function gracefulClose(signal) {
+    logger.info(`Received ${signal}`);
+    server.close(() => { logger.info('HTTP(S) server closed'); });
+}
