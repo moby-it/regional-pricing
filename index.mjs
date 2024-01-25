@@ -1,8 +1,8 @@
 import cors from 'cors';
 import { configDotenv } from 'dotenv';
 import express from 'express';
-import { seedDatabase } from './db/seedDatabase.mjs';
 
+import { seedPrices } from './default-prices/default-prices.mjs';
 import { logger } from './logger/logger.mjs';
 import { getMetrics } from './metrics.mjs';
 import { createRedisClient } from './redis/client.mjs';
@@ -13,7 +13,7 @@ configDotenv();
 const port = process.env.PORT || 8080;
 const app = express();
 app.use(cors());
-await seedDatabase();
+seedPrices();
 
 app.use('/price', priceRouter);
 app.use('/country', locationRouter);

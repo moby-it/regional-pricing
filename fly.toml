@@ -22,10 +22,6 @@ cpu_kind = "shared"
 cpus = 1
 memory_mb = 1024
 
-[mounts]
-source = "litefs"
-destination = "/var/lib/litefs"
-
 [env]
 REDIS_IP_TTL = "1440"
 NODE_ENV = "production"

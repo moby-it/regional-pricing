@@ -1,12 +1,10 @@
 import express from "express";
-import { selectQuery } from "../db/db.mjs";
+import { defaultPrices } from "../default-prices/default-prices.mjs";
 const priceRouter = express.Router();
 
 priceRouter.get('/default', async (req, res) => {
     try {
-        const sql = ` SELECT * FROM default_prices`;
-        const result = await selectQuery(sql);
-        return res.send(result);
+        return res.send(defaultPrices);
     } catch (error) {
         return res.send(error);
     }
