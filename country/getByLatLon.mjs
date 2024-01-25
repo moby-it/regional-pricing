@@ -41,4 +41,4 @@ export async function fetchByLatLon(lat, lon) {
       return;
     }
   }
-};
+}
