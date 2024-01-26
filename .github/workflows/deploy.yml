@@ -1,0 +1,33 @@
+name: Deploy to Fly IO
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+env:
+  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm test
+  integration-tests:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - run: test.sh
+  deploy:
+    runs-on: ubuntu-22.04
+    needs: [unit-tests, integration-tests]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only --image-label ${{ github.ref_name }}
