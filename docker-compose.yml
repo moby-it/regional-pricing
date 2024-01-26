@@ -1,0 +1,13 @@
+services:
+  redis: 
+    image: redis
+    ports:
+      - 6379:6379
+  regional-pricing:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    environment:
+      - REDIS_URL=redis://:@redis:6379

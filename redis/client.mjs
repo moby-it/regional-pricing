@@ -9,11 +9,7 @@ export async function createRedisClient() {
       return;
     }
     const client = await createClient({
-      url: redisUrl,
-      socket: {
-        family: 6
-      }
-
+      url: redisUrl
     }).connect();
     logger.info('connected to redis');
     return client;

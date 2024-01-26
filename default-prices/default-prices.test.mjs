@@ -1,6 +1,6 @@
+import assert from "node:assert";
 import { describe, it } from "node:test";
 import { defaultPrices, seedPrices } from "./default-prices.mjs";
-import assert from "node:assert";
 
 describe('Test Default Prices', () => {
   it('should popular the default prices from csv', async () => {
