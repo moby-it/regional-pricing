@@ -14,12 +14,25 @@ import { fileURLToPath } from 'url';
  */
 export const defaultPrices = [];
 
-export function seedPrices() {
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
-  const cvsFilePath = `${__dirname}/default_prices.csv`;
-  createReadStream(cvsFilePath).pipe(csvParser()).on('data', async (row) => {
-    defaultPrices.push(row);
+/**
+ * 
+ * @param {string} [filename] Parse csv filename, if present. Otherwise parse `default_prices.csv`
+ * @returns 
+ */
+export function seedPrices(filename) {
+  return new Promise((res) => {
+    const csvFilename = filename || 'default_prices.csv';
+
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+    const cvsFilePath = `${__dirname}/${csvFilename}`;
+    createReadStream(cvsFilePath).pipe(csvParser())
+      .on('data', async (row) => {
+        defaultPrices.push(row);
+      })
+      .on('end', () => { res(); })
+      ;
+
   });
 }
 

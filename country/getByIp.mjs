@@ -57,6 +57,7 @@ async function getCountryByIP(ip, redis) {
   const valiRes = v.safeParse(schema, res.data);
   if (valiRes.success) {
     {
+      logger.info(`country for ip ${ip} is ${valiRes.output.country}`, { ip, country: valiRes.output.country });
       const ttl = Number(process.env.REDIS_IP_TTL) || 14400; // defaults to 4 hours
       if (redis) { await redis.set(ip, valiRes.output.country, { EX: ttl }); }
       return valiRes.output.country;
