@@ -8,11 +8,13 @@ import { getMetrics } from './metrics.mjs';
 import { createRedisClient } from './redis/client.mjs';
 import locationRouter from './routes/location.route.mjs';
 import priceRouter from './routes/price.routes.mjs';
+import { seedPriceWeights } from './price-weights/price-weights.mjs';
 
 configDotenv();
 const port = process.env.PORT || 8080;
 const app = express();
 app.use(cors());
+await seedPriceWeights();
 seedPrices();
 
 app.use('/price', priceRouter);
