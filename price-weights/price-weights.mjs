@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
  * @typedef RegionalWeight
  * @property {string} Country
  * @property {string} Code
- * * @property {string} priceWeight
+ * * @property {number} priceWeight
 */
 
 /**
@@ -22,7 +22,8 @@ export function seedPriceWeights() {
     return new Promise((res) => {
         createReadStream(cvsFilePath).pipe(csvParser())
             .on('data', row => {
-                priceWeights.push(row);
+                priceWeights.push(
+                    { ...row, priceWeight: parseFloat(row.price_weight) });
             }).on('end', () => {
                 res();
             });

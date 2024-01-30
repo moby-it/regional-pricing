@@ -9,8 +9,8 @@ describe('Test Default Prices', () => {
     assert.equal(defaultPrices[0].Service_Name, "Consulting & Analysis");
     assert.equal(defaultPrices[1].Service_Name, "Design & Development");
     assert.equal(defaultPrices[2].Service_Name, "Development Support");
-    assert.equal(defaultPrices[0].Cost, "2000");
-    assert.equal(defaultPrices[1].Cost, "8500");
-    assert.equal(defaultPrices[2].Cost, "6200");
+    assert.equal(defaultPrices[0].Cost, 2000);
+    assert.equal(defaultPrices[1].Cost, 8500);
+    assert.equal(defaultPrices[2].Cost, 6200);
   });
 });
