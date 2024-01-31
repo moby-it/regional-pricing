@@ -10,7 +10,8 @@ regionalPricesRouter.get('/', async (req, res) => {
     try {
         const ipHeader = req.headers['ip-origin'];
         const { success, output: ip } = v.safeParse(v.string([v.minLength(9)]), ipHeader);
-        if (!success) {
+        const IPisLocal = isLocalIP(ip);
+        if (!success || IPisLocal) {
             return res.status(400).send({ message: "incorrect ip provided" });
         }
         const country = await fetchByIp(ip);
@@ -41,4 +42,14 @@ export function getRegionalPrices(priceWeight) {
         });
     }
     return regionalPrices;
+}
+export function isLocalIP(ip) {
+    if (ip === '127.0.0.1') return true;
+    const localIPPatterns = [
+        /^(10\.\d{1,3}\.\d{1,3}\.\d{1,3})$/, // 10.0.0.0 - 10.255.255.255
+        /^(172\.(1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3})$/, // 172.16.0.0 - 172.31.255.255
+        /^(192\.168\.\d{1,3}\.\d{1,3})$/ // 192.168.0.0 - 192.168.255.255
+    ];
+
+    return localIPPatterns.some(pattern => pattern.test(ip));
 }
