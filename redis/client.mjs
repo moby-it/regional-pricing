@@ -15,7 +15,7 @@ export async function createRedisClient() {
     return client;
   } catch (e) {
     logger.warn('failed to initialize redis');
-    logger.warn('Redis: ' + e.message);
+    logger.warn('Redis Error: ' + e.message);
     return null;
   }
 
