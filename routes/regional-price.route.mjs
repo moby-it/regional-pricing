@@ -45,4 +45,5 @@ function getRegionalPrices(priceWeight) {
             Cost: defaultPrice.Cost * priceWeight
         })
     }
+    return regionalPrices;
 }
