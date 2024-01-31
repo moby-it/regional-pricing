@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 import { defaultPrices, seedPrices } from "./default-prices.mjs";
 
 describe('Test Default Prices', () => {
-  it('should popular the default prices from csv', async () => {
+  it('should populate the default prices from csv', async () => {
     await seedPrices('default_prices.example.csv');
     assert.equal(defaultPrices.length, 3);
     assert.equal(defaultPrices[0].Service_Name, "Consulting & Analysis");
@@ -13,4 +13,4 @@ describe('Test Default Prices', () => {
     assert.equal(defaultPrices[1].Cost, 8500);
     assert.equal(defaultPrices[2].Cost, 6200);
   });
-});
+}); 5

@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
  * @typedef RegionalWeight
  * @property {string} Country
  * @property {string} Code
- * * @property {number} priceWeight
+ * * @property {number} price_weight
 */
 
 /**
@@ -15,15 +15,16 @@ import { fileURLToPath } from 'url';
  */
 export const priceWeights = [];
 
-export function seedPriceWeights() {
+export function seedPriceWeights(filename) {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
-    const cvsFilePath = `${__dirname}/price_weights.csv`;
+    const csvFilename = filename || 'price_weights.csv';
+    const csvFilePath = `${__dirname}/${csvFilename}`;
     return new Promise((res) => {
-        createReadStream(cvsFilePath).pipe(csvParser())
+        createReadStream(csvFilePath).pipe(csvParser())
             .on('data', row => {
                 priceWeights.push(
-                    { ...row, priceWeight: parseFloat(row.price_weight) });
+                    { ...row, price_weight: parseFloat(row.price_weight) });
             }).on('end', () => {
                 res();
             });

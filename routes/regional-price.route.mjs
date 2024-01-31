@@ -14,7 +14,7 @@ regionalPriceRouter.get('/', async (req, res) => {
             return res.status(400).send({ message: "incorrect ip provided" });
         }
         const country = await fetchByIp(ip);
-        const priceWeight = checkForPriceWeight(country)
+        const priceWeight = getPriceWeight(country)
         if (priceWeight === 1) {
             return res.send({ country, defaultPrices });
         }
@@ -27,17 +27,17 @@ regionalPriceRouter.get('/', async (req, res) => {
 });
 export default regionalPriceRouter;
 
-function checkForPriceWeight(country) {
+export function getPriceWeight(country) {
     let appliedPriceWeigth = 1;
     for (const priceWeight of priceWeights) {
         if (country === priceWeight.Country) {
-            appliedPriceWeigth = priceWeight.priceWeight;
+            appliedPriceWeigth = priceWeight.price_weight
         }
     }
     return appliedPriceWeigth;
 }
 
-function getRegionalPrices(priceWeight) {
+export function getRegionalPrices(priceWeight) {
     const regionalPrices = [];
     for (const defaultPrice of defaultPrices) {
         regionalPrices.push({
