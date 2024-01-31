@@ -35,7 +35,7 @@ const server = app.listen(port, () => {
 });
 
 process.on('SIGINT', () => {
-    logger.info('Received SIGINT. Press Control-D to exit.');
+    logger.info('received SIGINT.');
 });
 process.on('SIGINT', gracefulClose);
 process.on('SIGTERM', () => {
@@ -43,7 +43,9 @@ process.on('SIGTERM', () => {
     process.exit(1);
 });
 
-function gracefulClose(signal) {
-    logger.info(`Received ${signal}`);
+function gracefulClose() {
     server.close(() => { logger.info('HTTP(S) server closed'); });
+    setTimeout(() => {
+        process.exit(1);
+    }, 10000);
 }
