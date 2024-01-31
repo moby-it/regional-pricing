@@ -3,17 +3,11 @@ import { createReadStream } from "fs";
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-/**
- * @typedef RegionalWeight
- * @property {string} Country
- * @property {string} Code
- * * @property {number} price_weight
-*/
 
 /**
- * @type {RegionalWeight[]}
+ * @type {Map<string, number>}
  */
-export const priceWeights = [];
+export const priceWeights = new Map();
 
 export function seedPriceWeights(filename) {
     const __filename = fileURLToPath(import.meta.url);
@@ -23,8 +17,7 @@ export function seedPriceWeights(filename) {
     return new Promise((res) => {
         createReadStream(csvFilePath).pipe(csvParser())
             .on('data', row => {
-                priceWeights.push(
-                    { ...row, price_weight: parseFloat(row.price_weight) });
+                priceWeights.set(row.Country, row.price_weight);
             }).on('end', () => {
                 res();
             });

@@ -4,9 +4,9 @@ import * as v from 'valibot';
 import { logger } from "../logger/logger.mjs";
 import { priceWeights } from "../price-weights/price-weights.mjs";
 import { defaultPrices } from "../default-prices/default-prices.mjs";
-const regionalPriceRouter = express.Router();
+const regionalPricesRouter = express.Router();
 
-regionalPriceRouter.get('/', async (req, res) => {
+regionalPricesRouter.get('/', async (req, res) => {
     try {
         const ipHeader = req.headers['ip-origin'];
         const { success, output: ip } = v.safeParse(v.string([v.minLength(9)]), ipHeader);
@@ -14,27 +14,22 @@ regionalPriceRouter.get('/', async (req, res) => {
             return res.status(400).send({ message: "incorrect ip provided" });
         }
         const country = await fetchByIp(ip);
-        const priceWeight = getPriceWeight(country)
+        const priceWeight = getPriceWeight(country);
         if (priceWeight === 1) {
             return res.send({ country, defaultPrices });
         }
-        const regionalPrices = getRegionalPrices(priceWeight);
+        const regionalPrices = getRegionalPrices(priceWeight)
+            .map((rp) => ({ ...rp, Cost: +rp.Cost.toFixed(2) }));
         return res.send({ country, defaultPrices, regionalPrices });
     } catch (error) {
         logger.error(error);
         res.status(500).send(error);
     }
 });
-export default regionalPriceRouter;
+export default regionalPricesRouter;
 
 export function getPriceWeight(country) {
-    let appliedPriceWeigth = 1;
-    for (const priceWeight of priceWeights) {
-        if (country === priceWeight.Country) {
-            appliedPriceWeigth = priceWeight.price_weight
-        }
-    }
-    return appliedPriceWeigth;
+    return priceWeights.get(country) || 1;
 }
 
 export function getRegionalPrices(priceWeight) {
@@ -43,7 +38,7 @@ export function getRegionalPrices(priceWeight) {
         regionalPrices.push({
             ...defaultPrice,
             Cost: defaultPrice.Cost * priceWeight
-        })
+        });
     }
     return regionalPrices;
 }

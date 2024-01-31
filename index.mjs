@@ -4,12 +4,12 @@ import express from 'express';
 
 import { seedPrices } from './default-prices/default-prices.mjs';
 import { logger } from './logger/logger.mjs';
-import { getMetrics } from './metrics.mjs';
+import { getMetrics } from './metrics/metrics.mjs';
 import { createRedisClient } from './redis/client.mjs';
 
 import { seedPriceWeights } from './price-weights/price-weights.mjs';
 
-import regionalPriceRouter from './routes/regional-price.route.mjs';
+import regionalPricesRouter from './routes/regional-price.route.mjs';
 configDotenv();
 const port = process.env.PORT || 8080;
 const app = express();
@@ -17,7 +17,7 @@ app.use(cors());
 await seedPriceWeights();
 await seedPrices();
 
-app.use('/regionalPrice', regionalPriceRouter)
+app.use('/regionalPrices', regionalPricesRouter)
 app.get('/metrics', async (req, res) => {
     try {
         const client = await createRedisClient();
@@ -45,7 +45,4 @@ process.on('SIGTERM', () => {
 
 function gracefulClose() {
     server.close(() => { logger.info('HTTP(S) server closed'); });
-    setTimeout(() => {
-        process.exit(1);
-    }, 10000);
 }

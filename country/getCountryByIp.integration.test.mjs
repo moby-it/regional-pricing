@@ -1,6 +1,6 @@
 import assert from "assert";
 import { before, after, describe, it } from "node:test";
-import { getMetrics } from "../metrics.mjs";
+import { getMetrics } from "../metrics/metrics.mjs";
 import { createRedisClient } from "../redis/client.mjs";
 import { fetchByIp } from "./getByIp.mjs";
 
