@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Server-side application which receives location (latitude, longitude),\r determines the corresponding country and returns the pricing",
   "main": "index.mjs",
+  "engines": {
+    "node": ">=20.10.*",
+    "npm": ">=10.2.4"
+  },
   "dependencies": {
     "axios": "^1.6.5",
     "body-parser": "^1.20.1",
