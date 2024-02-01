@@ -14,10 +14,11 @@ configDotenv();
 const port = process.env.PORT || 8080;
 const app = express();
 app.use(cors());
+app.use(validateClient);
 await seedPriceWeights();
 await seedPrices();
 
-app.use('/regionalPrices', regionalPricesRouter)
+app.use('/regionalPrices', regionalPricesRouter);
 app.get('/metrics', async (req, res) => {
     try {
         const client = await createRedisClient();
@@ -45,4 +46,11 @@ process.on('SIGTERM', () => {
 
 function gracefulClose() {
     server.close(() => { logger.info('HTTP(S) server closed'); });
+}
+
+function validateClient(req, res, next) {
+    const apiKey = process.env['APIKEY'] || '';
+    if (!apiKey) next();
+    else if (apiKey === req.headers['x-api-key']) next();
+    else res.sendStatus(403);
 }
