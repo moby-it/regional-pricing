@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 /**
  * @typedef Price
  * @property {string} Service_Name
- * @property {string} Cost
+ * @property {number} Cost
 */
 
 /**
@@ -28,7 +28,7 @@ export function seedPrices(filename) {
     const cvsFilePath = `${__dirname}/${csvFilename}`;
     createReadStream(cvsFilePath).pipe(csvParser())
       .on('data', async (row) => {
-        defaultPrices.push(row);
+        defaultPrices.push({ ...row, Cost: +row.Cost });
       })
       .on('end', () => { res(); })
       ;
