@@ -18,5 +18,4 @@ export async function createRedisClient() {
     logger.warn('Redis Error: ' + e.message);
     return null;
   }
-
 }

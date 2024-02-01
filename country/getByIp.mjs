@@ -1,7 +1,7 @@
 import axios from "axios";
 import * as v from 'valibot';
 import { createRedisClient } from "../redis/client.mjs";
-import { incrMetric } from "../metrics.mjs";
+import { incrMetric } from "../metrics/metrics.mjs";
 import { logger } from "../logger/logger.mjs";
 
 /**
@@ -11,7 +11,7 @@ function getCountryByIPApiUrl(ip) {
   if (!ip) {
     logger.error('no ip provided');
   }
-  return `http://ip-api.com/json/${ip}?fields=49155`;
+  return `http://ip-api.com/json/${ip}?fields=16385`;
 }
 
 /**
@@ -51,8 +51,7 @@ async function getCountryByIP(ip, redis) {
   }
   const schema = v.object({
     status: v.string(),
-    country: v.string(),
-    countryCode: v.string()
+    country: v.string()
   });
   const valiRes = v.safeParse(schema, res.data);
   if (valiRes.success) {
