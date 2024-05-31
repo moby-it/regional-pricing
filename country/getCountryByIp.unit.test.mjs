@@ -14,8 +14,8 @@ describe('TEST: Get by IP', async () => {
     const country = await fetchByIp(UnitedStatesIP);
     assert.equal(country, "United States");
   });
-  it(`should get The Netherlands for ${NetherlandsIP}`, async () => {
+  it(`should get Netherlands for ${NetherlandsIP}`, async () => {
     const country = await fetchByIp(NetherlandsIP);
-    assert.equal(country, "The Netherlands");
+    assert.equal(country, "Netherlands");
   });
 });
