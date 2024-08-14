@@ -4,7 +4,7 @@ services:
     restart: always
     ports:
       - 12045:6379
-  regional-pricing:
+  web-api:
     image: ghcr.io/moby-it/regional-pricing
     restart: always
     ports:
