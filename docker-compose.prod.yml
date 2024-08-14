@@ -3,11 +3,10 @@ services:
     image: redis
     restart: always
     ports:
-      - 6379:6379
+      - 12045:6379
   regional-pricing:
-    image: moby-it/regional-pricing
+    image: ghci.io/moby-it/regional-pricing
     restart: always
     ports:
-      - 47025:8080
-    environment:
-      - REDIS_URL=redis://:@redis:6379
+      - 44003:8080
+    env_file: .env.docker
