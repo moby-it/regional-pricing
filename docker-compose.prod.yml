@@ -5,7 +5,7 @@ services:
     ports:
       - 12045:6379
   regional-pricing:
-    image: ghci.io/moby-it/regional-pricing
+    image: ghcr.io/moby-it/regional-pricing
     restart: always
     ports:
       - 44003:8080
