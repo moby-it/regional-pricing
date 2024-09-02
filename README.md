@@ -1,7 +1,6 @@
 # Moby IT Regional Pricing
 
-Server-side application which receives location (latitude, longitude),
-determines the corresponding country and returns the pricing
+Server-side application which receives an IP, determines the corresponding country and returns the pricing for Moby IT services.
 
 ## Testing Naming conventions
 
